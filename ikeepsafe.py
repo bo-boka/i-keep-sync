@@ -33,6 +33,7 @@ def scrape_page(driver):
 def main():
     """
     Scrapes iKeepSafe for product certifications, spanning multiple pages.
+    TODO: Realized there are also subproducts on some of the products (see GoGuardian) that need to also be looped through
     TODO: Loop through individual cert page links & copy to google sheets. Currently manually changing # at the end of url per certification type
     :return:
     """
@@ -40,7 +41,7 @@ def main():
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service)
 
-    driver.get('https://ikeepsafe.org/products/#atlis')
+    driver.get('https://ikeepsafe.org/products/#all')
 
     current_page_number = 1
     prod_total = 0
