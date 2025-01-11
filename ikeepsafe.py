@@ -1,6 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-# from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -79,6 +77,9 @@ def main():
 
                 next_button.click()
                 time.sleep(2)  # Wait for the page to load; adjust timing as needed
+            else:
+                print("Next button no longer exists; End of pages:", current_page_number)
+                break
         except Exception as e:
             print(traceback.format_exc())
             break
