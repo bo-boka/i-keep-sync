@@ -1,11 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
+import traceback
 
 
 def scrape_page(driver):
@@ -33,38 +34,53 @@ def scrape_page(driver):
 def main():
     """
     Scrapes iKeepSafe for product certifications, spanning multiple pages.
-    TODO: Realized there are also subproducts on some of the products (see GoGuardian) that need to also be looped through
+    TODO: Realized there are also subproducts on some of the products (see GoGuardian & ExploreLearning) that need to also be looped through
     TODO: Loop through individual cert page links & copy to google sheets. Currently manually changing # at the end of url per certification type
     :return:
     """
     # set up Chrome and Selenium
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
-
+    driver = webdriver.Chrome()
     driver.get('https://ikeepsafe.org/products/#all')
 
-    current_page_number = 1
+    last_page_number = None
     prod_total = 0
 
     while True:
-        # print("Page ", current_page_number)
-
-        # scrape page, return product count to add to total count
-        prod_total += scrape_page(driver)
-
-        current_page_number += 1
-
         try:
-            # Navigate to next page
-            next_button = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR,
-                                            "a.products__pagination__item.product__pagination__item--nav i.fa.fa-arrow-right"))
-            )
-            next_button.click()
-            time.sleep(2)  # Wait for the page to load; adjust timing as needed
+            # scrape page, return product count to add to total count
+            prod_total += scrape_page(driver)
+
+            current_page_number = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "span.products__pagination__item--active"))
+            ).text.strip()
+
+            print(current_page_number)
+            print(last_page_number)
+
+            if current_page_number == last_page_number:
+                print("Reached the last page or stuck on a page.")
+                break
+            last_page_number = current_page_number
+
+            # Check if the "Next" button exists
+            next_button_exists = len(driver.find_elements(By.CSS_SELECTOR,
+                                                          "a.products__pagination__item.product__pagination__item--nav i.fa.fa-arrow-right")) > 0
+            if next_button_exists:
+                # Navigate to next page
+                next_button = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                "a.products__pagination__item.product__pagination__item--nav i.fa.fa-arrow-right"))
+                )
+
+                # Check if the next button is the last element or disabled (some websites use this)
+                if "disabled" in next_button.get_attribute("class"):
+                    print("Next button is disabled. Last page reached.")
+                    break
+
+                next_button.click()
+                time.sleep(2)  # Wait for the page to load; adjust timing as needed
         except Exception as e:
-            # print("No more pages or error navigating:", e)
-            print("No more pages or error navigating.")
+            print(traceback.format_exc())
             break
 
     driver.quit()
