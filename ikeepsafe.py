@@ -19,7 +19,7 @@ CERTIFICATIONS = {
 
 def scrape_page(driver, product_data, prods_w_subs):
     """
-    Scrapes individual pages, looping through each product div and subproducts to pull data & update Dataframe.
+    Scrapes individual pages, looping through each product div and sub-products to pull data & update Dataframe.
     Attributes scraped:
         -Product Name
         -Company Name
