@@ -3,9 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
-import pandas as pd
 import time
-import traceback
 import re
 
 # Mappings of target certification alt properties to preferred sheet names
@@ -141,10 +139,10 @@ def scrape_page(driver, product_data, prods_w_subs):
     return prod_count
 
 
-def main():
+def connect_ikeepsafe():
     """
-    Scrapes data, page by page, converts to CSV.
-    :return:
+    Connects to ikeepsafe website for product certs. Flips through pages to be scraped.
+    :return: scraped product data
     """
 
     try:
@@ -193,28 +191,14 @@ def main():
 
         driver.quit()
 
-        df = pd.DataFrame(product_data)
-        df.to_csv("iKeepSafe_cert_data_01_2025.csv", index=False)
-
-        # Results
-        print(df.head(10))
-        print("Dataframe Row Count", len(df))
         print("Product Count: ", prod_total)
         print("Products containing sub-products", prods_w_subs)
-        # Count products by certification
-        certification_summary = df[["FERPA", "COPPA", "CSPC", "ATLIS"]].sum()
-        certification_summary["Total"] = certification_summary.sum()
-        print(certification_summary)
+
+        return product_data
 
     except Exception as e:
         driver.quit()
-        df = pd.DataFrame(product_data)
-        # Results
-        print(df.head(10))
-        print("Dataframe Row Count", len(df))
+        print("connect_ikeepsafe() exception block")
         print("Product Count: ", prod_total)
         print("Products containing sub-products", prods_w_subs)
-        print(traceback.format_exc())
-
-# Run the function
-main()
+        raise

@@ -1,0 +1,10 @@
+# Environments
+.env
+/env
+
+# Python files
+.pyc
+
+# Jupyter files
+.ipynb_checkpoints  
+*/.ipynb_checkpoints/* 
