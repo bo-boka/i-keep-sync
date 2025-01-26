@@ -2,7 +2,9 @@
 .env
 /env
 
-# Python files
+# Byte-compiled
+__pycache__/
+*.py[cod]
 .pyc
 
 # Jupyter files
