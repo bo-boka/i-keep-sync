@@ -32,22 +32,23 @@ def main():
             print("File already exists.")
         '''
 
+        sheet_name = "iKeepSafe_products_data_01_2025"
+        sheet_idx = 0
+
         # Load environment variables from the .env file
         load_dotenv()
         # Get the path to the service account JSON from the environment
         service_account_file = os.getenv("SERVICE_ACCOUNT_FILE")
-
         # Verify the path (optional)
         if not service_account_file:
             raise ValueError("SERVICE_ACCOUNT_FILE is not set in the .env file!")
         print(f"Using service account file: {service_account_file}")
 
-        sheet_name = "iKeepSafe_products_data_01_2025"
         # Initialize Google Sheets integration
         gs = GoogleSheets(service_account_file, sheet_name)
 
         # Read data from Google Sheets
-        df = gs.read_sheet()
+        df = gs.read_sheet(sheet_idx)
         print(df)
 
     except Exception as e:
