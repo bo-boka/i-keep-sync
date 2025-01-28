@@ -1,5 +1,7 @@
 from ikeepsafe import connect_ikeepsafe
 from google_sheets import GoogleSheets
+import pandas as pd
+import datetime
 import traceback
 from dotenv import load_dotenv
 import os
@@ -11,29 +13,27 @@ def main():
     :return:
     """
     try:
-        '''
-        new_data = connect_ikeepsafe()
-
-        df = pd.DataFrame(new_data)
-
-        try:
-            df.to_csv("./data/iKeepSafe_certs_01_23_2025.csv", index=False, mode='x')  # mode x fails if file exists
-        except FileExistsError:
-            # df.to_csv('unique_name.csv')
-            
-        # Results
-        print(df.head(10))
-        print("Dataframe Row Count", len(df))
-
-        # Count products by certification
-        certification_summary = df[["FERPA", "COPPA", "CSPC", "ATLIS"]].sum()
-        certification_summary["Total"] = certification_summary.sum()
-        print(certification_summary)
-            print("File already exists.")
-        '''
 
         spreadsheet_name = "iKeepSafe_products_data_01_2025"
         sheet_idx = 0
+
+        new_worksheet_name = "iKeepSafe_certs_" + datetime.datetime.now().strftime("%Y-%m-%d")
+        new_data = connect_ikeepsafe()
+        new_df = pd.DataFrame(new_data)
+
+        try:
+            new_df.to_csv("./data/" + new_worksheet_name + ".csv", index=False, mode='x')  # mode x fails if file exists
+        except FileExistsError:
+            print("File already exists.")
+
+        # Results
+        print(new_df.head(10))
+        print("Dataframe Row Count", len(new_df))
+
+        # Count products by certification
+        certification_summary = new_df[["FERPA", "COPPA", "CSPC", "ATLIS"]].sum()
+        certification_summary["Total"] = certification_summary.sum()
+        print(certification_summary)
 
         # Load environment variables from the .env file
         load_dotenv()
@@ -47,9 +47,11 @@ def main():
         # Initialize Google Sheets integration
         gs = GoogleSheets(service_account_file, spreadsheet_name)
 
-        # Read data from Google Sheets
-        df = gs.read_sheet(sheet_idx)
-        print(df)
+        # Read data from Google Sheet
+        old_df = gs.read_sheet(sheet_idx)
+        print("Old sheet data:", old_df.head())
+        # Create new sheet
+        gs.create_write_sheet(new_worksheet_name, new_df)
 
     except Exception as e:
         print(traceback.format_exc())

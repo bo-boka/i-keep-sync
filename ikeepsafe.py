@@ -189,16 +189,12 @@ def connect_ikeepsafe():
             next_button.click()
             time.sleep(1)  # Wait for the page to load; adjust timing as needed
 
-        driver.quit()
-
-        print("Product Count: ", prod_total)
-        print("Products containing sub-products", prods_w_subs)
-
         return product_data
 
     except Exception as e:
+        print("ikeepsafe.py exception block")
+        raise
+    finally:
         driver.quit()
-        print("connect_ikeepsafe() exception block")
         print("Product Count: ", prod_total)
         print("Products containing sub-products", prods_w_subs)
-        raise

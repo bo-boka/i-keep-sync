@@ -69,6 +69,10 @@ class GoogleSheets:
         data = sheet.get_all_records()
         return pd.DataFrame(data)
 
+    def create_write_sheet(self, title, dataframe):
+        worksheet = self.get_spreadsheet().add_worksheet(title=title, rows=100, cols=20)
+        worksheet.update([dataframe.columns.values.tolist()] + dataframe.values.tolist())
+
     def write_sheet(self, dataframe, sheet_idx=None):
         sheet = self.get_sheet(sheet_idx)
         sheet.update([dataframe.columns.values.tolist()] + dataframe.values.tolist())
