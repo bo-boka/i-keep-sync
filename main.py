@@ -32,7 +32,7 @@ def main():
             print("File already exists.")
         '''
 
-        sheet_name = "iKeepSafe_products_data_01_2025"
+        spreadsheet_name = "iKeepSafe_products_data_01_2025"
         sheet_idx = 0
 
         # Load environment variables from the .env file
@@ -45,7 +45,7 @@ def main():
         print(f"Using service account file: {service_account_file}")
 
         # Initialize Google Sheets integration
-        gs = GoogleSheets(service_account_file, sheet_name)
+        gs = GoogleSheets(service_account_file, spreadsheet_name)
 
         # Read data from Google Sheets
         df = gs.read_sheet(sheet_idx)
