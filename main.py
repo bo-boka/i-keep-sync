@@ -43,12 +43,12 @@ def main():
     """
     _SPREADSHEET_NAME = "iKeepSafe_products_data_01_2025"
     _SHEET_INDEX = 0
-    _DEBUG = True
+    _DEBUG = False
 
     try:
-        service_account_file = load_env_variables()
+        # service_account_file = load_env_variables()
         # Initialize Google Sheets integration
-        gs = GoogleSheets(service_account_file, _SPREADSHEET_NAME)
+        # gs = GoogleSheets(service_account_file, _SPREADSHEET_NAME)
 
         new_worksheet_name = "iKeepSafe_certs_" + datetime.datetime.now().strftime("%Y-%m-%d")
         csv_filename = "./data/" + new_worksheet_name + ".csv"
@@ -65,12 +65,12 @@ def main():
             new_data = connect_ikeepsafe()
             new_df = pd.DataFrame(new_data)
             save_data_to_csv(new_df, csv_filename)
-            gs.create_write_sheet(new_worksheet_name, new_df)
+            # gs.create_write_sheet(new_worksheet_name, new_df)
             analyze_new_data(new_data)
 
         # Read old data from Google Sheet
-        old_df = gs.read_sheet(_SHEET_INDEX)
-        print("Old sheet data:", old_df.head())
+        # old_df = gs.read_sheet(_SHEET_INDEX)
+        # print("Old sheet data:", old_df.head())
 
     except Exception as e:
         print(traceback.format_exc())
